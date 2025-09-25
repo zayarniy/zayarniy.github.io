@@ -10,10 +10,17 @@
 <body>
     <p onclick="changeText()" id="hello">Привет!</p>
     <button onclick="changeText()">Press me</button>
+    <button id="button2">Press me 2</button>
+    <button id="button3">Press me 3</button>
 
     <script>
 
-        
+        document.getElementById('button2').addEventListener('click',changeText)
+
+        document.getElementById('button3').addEventListener('click', ()=>{
+            document.getElementById('hello').textContent = 'Как дела?'
+        })
+
         function changeText() {
             document.getElementById('hello').textContent = 'Как дела?'
         }
