@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>C# тестирование учеников</title>
-  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons (опционально, для красоты) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <style>
     body {
@@ -15,16 +13,12 @@
       padding: 20px;
       font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
     }
-    .test-container {
-      max-width: 920px;
-      margin: 0 auto;
-    }
+    .test-container { max-width: 920px; margin: 0 auto; }
     .question-card {
       background-color: #ffffff;
       border: none;
       border-radius: 24px;
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
-      transition: transform 0.2s;
     }
     .question-text {
       font-weight: 600;
@@ -55,8 +49,7 @@
       box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
     }
     .option-item input[type="radio"] {
-      width: 20px;
-      height: 20px;
+      width: 20px; height: 20px;
       accent-color: #4f46e5;
       margin-right: 4px;
       flex-shrink: 0;
@@ -68,11 +61,7 @@
       flex: 1;
       margin: 0;
     }
-    .progress {
-      height: 10px;
-      border-radius: 12px;
-      background-color: #e2e8f0;
-    }
+    .progress { height: 10px; border-radius: 12px; background-color: #e2e8f0; }
     .progress-bar {
       background: linear-gradient(90deg, #4f46e5, #818cf8);
       border-radius: 12px;
@@ -85,22 +74,15 @@
       padding: 6px 14px;
       border-radius: 40px;
       font-size: 0.9rem;
-      letter-spacing: 0.3px;
     }
     .btn-primary {
-      background: #4f46e5;
-      border: none;
+      background: #4f46e5; border: none;
       border-radius: 40px;
       padding: 10px 28px;
       font-weight: 600;
-      transition: all 0.15s;
       box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
     }
-    .btn-primary:hover {
-      background: #4338ca;
-      transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
-    }
+    .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
     .btn-outline-secondary {
       border-radius: 40px;
       padding: 10px 24px;
@@ -108,35 +90,37 @@
       border-color: #cbd5e1;
       color: #475569;
     }
-    .btn-outline-secondary:hover {
-      background-color: #f1f5f9;
-      border-color: #94a3b8;
-      color: #1e293b;
-    }
     .result-card {
       background: white;
       border-radius: 28px;
-      padding: 2rem 2rem;
+      padding: 2rem;
       box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.12);
     }
     .score-circle {
-      width: 120px;
-      height: 120px;
+      width: 120px; height: 120px;
       border-radius: 50%;
       background: linear-gradient(135deg, #4f46e5, #818cf8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       margin: 0 auto 1rem;
       color: white;
       font-size: 2.4rem;
       font-weight: 700;
       box-shadow: 0 12px 24px -6px rgba(79, 70, 229, 0.5);
     }
-    .feedback-emoji {
-      font-size: 3.5rem;
-      line-height: 1;
-      margin-bottom: 0.5rem;
+    .feedback-emoji { font-size: 3.5rem; line-height: 1; margin-bottom: 0.5rem; }
+    .topic-badge {
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 0;
     }
     @media (max-width: 576px) {
       .question-text { font-size: 1.15rem; }
@@ -147,7 +131,6 @@
 </head>
 <body>
   <div class="test-container">
-    <!-- Заголовок -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h1 class="display-6 fw-bold" style="color: #0f172a;">🧪 Тест по C#</h1>
@@ -156,67 +139,39 @@
       <i class="bi bi-braces-asterisk fs-1 text-primary opacity-50 d-none d-sm-block"></i>
     </div>
 
-    <!-- Прогресс-бар (изначально скрыт, показывается во время теста) -->
     <div id="progressSection" class="mb-4 d-none">
       <div class="d-flex justify-content-between align-items-center mb-1">
-        <span class="badge-step" id="progressText">Вопрос 1 из 5</span>
+        <span class="badge-step" id="progressText">Вопрос 1 из 20</span>
         <span class="text-secondary small" id="progressPercent">0%</span>
       </div>
       <div class="progress">
-        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
       </div>
     </div>
 
-    <!-- Контейнер для теста -->
     <div id="quizArea" class="question-card p-4 p-md-5">
-      <!-- Здесь будет отображаться вопрос -->
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Загрузка...</span>
+        </div>
+        <p class="text-secondary">Загружаем вопросы из Google Таблицы...</p>
+      </div>
     </div>
 
-    <!-- Результаты (изначально скрыты) -->
     <div id="resultArea" class="result-card d-none text-center"></div>
   </div>
 
   <script>
     (function() {
       // ------------------------------
-      // Данные для теста (вопросы по C#)
+      // Ссылка на опубликованную TSV Google Таблицы
       // ------------------------------
-      const questions = [
-        {
-          text: 'Какой тип данных в C# используется для хранения целых чисел?',
-          options: ['int', 'float', 'string', 'bool'],
-          correct: 0
-        },
-        {
-          text: 'Что означает ключевое слово "static" в C#?',
-          options: [
-            'Свойство принадлежит экземпляру класса',
-            'Метод или поле принадлежит типу, а не объекту',
-            'Переменная не может быть изменена',
-            'Класс является абстрактным'
-          ],
-          correct: 1
-        },
-        {
-          text: 'Какой оператор используется для проверки типа во время выполнения?',
-          options: ['typeof', 'is', 'as', 'sizeof'],
-          correct: 1
-        },
-        {
-          text: 'Что из перечисленного НЕ является циклом в C#?',
-          options: ['for', 'while', 'do-while', 'repeat-until'],
-          correct: 3
-        },
-        {
-          text: 'Какое пространство имён содержит базовые классы .NET, такие как Console и Math?',
-          options: ['System', 'System.IO', 'System.Collections', 'System.Linq'],
-          correct: 0
-        }
-      ];
+      const SHEET_TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoazCGiivCIJuiWUcUuvvGkpDajpvrTcfxzRnyeWhdBPMGVlVtSmuPp2Wn7DmOnU3zJw-SRb2MPUms/pub?output=tsv';
 
       // Состояние теста
+      let questions = [];         // массив загруженных вопросов
       let currentQuestionIndex = 0;
-      let selectedAnswers = new Array(questions.length).fill(null); // -1 или null = не выбран
+      let selectedAnswers = [];
       let score = 0;
 
       // DOM элементы
@@ -227,7 +182,87 @@
       const progressPercent = document.getElementById('progressPercent');
       const progressBar = document.getElementById('progressBar');
 
-      // Инициализация/сброс
+      // ------------------------------
+      // Загрузка и парсинг TSV
+      // ------------------------------
+      async function loadQuestionsFromSheet() {
+        const res = await fetch(SHEET_TSV_URL, { cache: 'no-cache' });
+        if (!res.ok) throw new Error('Ошибка загрузки: ' + res.status);
+        const text = await res.text();
+        return parseTSV(text);
+      }
+
+      // Простой парсер TSV (табы — разделители, кавычки не поддерживаются,
+      // но для нашего случая достаточно)
+      function parseTSV(text) {
+        const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+        const rows = [];
+        for (const line of lines) {
+          if (line.trim() === '') continue;
+          rows.push(line.split('\t').map(cell => cell.trim()));
+        }
+        return rows;
+      }
+
+      // Преобразование строк TSV в объекты вопросов
+      // Столбцы: N | Тема | Вопрос | Вар1 | Вар2 | Вар3 | Вар4 | НомерПравильного
+      function rowsToQuestions(rows) {
+        if (rows.length < 2) throw new Error('В таблице нет данных');
+
+        // Пропускаем заголовок
+        const dataRows = rows.slice(1);
+        const result = [];
+        dataRows.forEach((r, idx) => {
+          if (r.length < 8) return; // пропустить некорректные строки
+          const number = parseInt(r[0], 10);
+          const topic = r[1];
+          const questionText = r[2];
+          const options = [r[3], r[4], r[5], r[6]].filter(o => o !== '');
+          const correctNum = parseInt(r[7], 10); // 1..4
+
+          if (!questionText || options.length < 2) return;
+          if (isNaN(correctNum) || correctNum < 1 || correctNum > options.length) return;
+
+          result.push({
+            number: isNaN(number) ? idx + 1 : number,
+            topic: topic,
+            text: questionText,
+            options: options,
+            correct: correctNum - 1 // в 0-индексацию
+          });
+        });
+        return result;
+      }
+
+      // ------------------------------
+      // Инициализация
+      // ------------------------------
+      async function init() {
+        try {
+          const rows = await loadQuestionsFromSheet();
+          questions = rowsToQuestions(rows);
+          if (questions.length === 0) throw new Error('Не удалось распознать ни одного вопроса');
+          resetQuiz();
+        } catch (err) {
+          console.error(err);
+          quizArea.innerHTML = `
+            <div class="alert alert-danger mb-0" role="alert">
+              <h5 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Не удалось загрузить вопросы</h5>
+              <p class="mb-2">${escapeHtml(err.message)}</p>
+              <hr>
+              <p class="mb-0 small">
+                Проверьте, что таблица опубликована в интернете (Файл → Поделиться → Опубликовать в интернете),
+                доступна по ссылке и содержит колонки:
+                <code>N | Тема | Вопрос | Вар1 | Вар2 | Вар3 | Вар4 | НомерПравильного</code>.
+              </p>
+              <button class="btn btn-primary mt-3" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise"></i> Повторить
+              </button>
+            </div>
+          `;
+        }
+      }
+
       function resetQuiz() {
         currentQuestionIndex = 0;
         selectedAnswers = new Array(questions.length).fill(null);
@@ -240,7 +275,6 @@
         updateProgress();
       }
 
-      // Обновление прогресса
       function updateProgress() {
         const total = questions.length;
         const answered = selectedAnswers.filter(a => a !== null).length;
@@ -248,28 +282,24 @@
         progressText.textContent = `Вопрос ${currentQuestionIndex + 1} из ${total}`;
         progressPercent.textContent = `${percent}%`;
         progressBar.style.width = `${percent}%`;
-        progressBar.setAttribute('aria-valuenow', percent);
-        progressBar.setAttribute('aria-valuemax', 100);
       }
 
-      // Отрисовка текущего вопроса
       function renderQuestion(index) {
         const q = questions[index];
-        const selected = selectedAnswers[index]; // индекс выбранного варианта или null
+        const selected = selectedAnswers[index];
 
-        // Формируем HTML для вариантов
         let optionsHtml = '';
         q.options.forEach((opt, optIndex) => {
           const isSelected = (selected === optIndex);
           optionsHtml += `
             <div class="option-item ${isSelected ? 'selected' : ''}" data-option-index="${optIndex}">
-              <input class="form-check-input" type="radio" name="questionOptions" id="opt_${optIndex}" value="${optIndex}" ${isSelected ? 'checked' : ''}>
+              <input class="form-check-input" type="radio" name="questionOptions"
+                     id="opt_${optIndex}" value="${optIndex}" ${isSelected ? 'checked' : ''}>
               <label class="option-label" for="opt_${optIndex}">${escapeHtml(opt)}</label>
             </div>
           `;
         });
 
-        // Кнопки навигации
         const isFirst = (index === 0);
         const isLast = (index === questions.length - 1);
         const hasSelected = (selected !== null && selected !== undefined);
@@ -286,41 +316,35 @@
           </div>
         `;
 
-        // Если это последний вопрос и на него уже ответили, кнопка "Завершить" активна.
-        // Но также можно сделать кнопку "Завершить" доступной всегда, если ответ дан.
-        // Логика уже отражена.
-
         quizArea.innerHTML = `
-          <div class="d-flex justify-content-between align-items-start mb-3">
-            <h4 class="question-text mb-0">${escapeHtml(q.text)}</h4>
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              ${q.topic ? `<span class="topic-badge">${escapeHtml(q.topic)}</span>` : ''}
+            </div>
             <span class="badge-step ms-2">${index + 1}/${questions.length}</span>
           </div>
+          <h4 class="question-text mb-3">${escapeHtml(q.text)}</h4>
           <div class="mt-3" id="optionsContainer">
             ${optionsHtml}
           </div>
           ${navButtons}
         `;
 
-        // Обработчики для вариантов
         const optionDivs = quizArea.querySelectorAll('.option-item');
         optionDivs.forEach(div => {
           div.addEventListener('click', function(e) {
-            // Чтобы клик по label не дублировался
             if (e.target.tagName === 'INPUT') return;
             const radio = this.querySelector('input[type="radio"]');
             if (radio) {
               radio.checked = true;
-              // Убираем выделение у других
               optionDivs.forEach(d => d.classList.remove('selected'));
               this.classList.add('selected');
-              // Сохраняем ответ
               const optIndex = parseInt(this.dataset.optionIndex, 10);
               handleOptionSelect(optIndex);
             }
           });
         });
 
-        // Также обработаем изменение radio (на случай если кликнули прямо по радио)
         const radioInputs = quizArea.querySelectorAll('input[type="radio"]');
         radioInputs.forEach(radio => {
           radio.addEventListener('change', function(e) {
@@ -333,7 +357,6 @@
           });
         });
 
-        // Обработчики кнопок
         const prevBtn = document.getElementById('prevBtn');
         if (prevBtn) {
           prevBtn.addEventListener('click', () => {
@@ -348,7 +371,7 @@
         const nextBtn = document.getElementById('nextBtn');
         if (nextBtn) {
           nextBtn.addEventListener('click', () => {
-            if (selectedAnswers[currentQuestionIndex] === null) return; // защита
+            if (selectedAnswers[currentQuestionIndex] === null) return;
             if (currentQuestionIndex < questions.length - 1) {
               currentQuestionIndex++;
               renderQuestion(currentQuestionIndex);
@@ -365,68 +388,64 @@
           });
         }
 
-        // Обновляем прогресс (на случай если изменился индекс)
         updateProgress();
       }
 
-      // Обработка выбора варианта
       function handleOptionSelect(optIndex) {
         if (selectedAnswers[currentQuestionIndex] === optIndex) return;
         selectedAnswers[currentQuestionIndex] = optIndex;
-
-        // Разблокируем кнопку "Далее" или "Завершить", если она есть
         const nextBtn = document.getElementById('nextBtn');
         const finishBtn = document.getElementById('finishBtn');
         if (nextBtn) nextBtn.disabled = false;
         if (finishBtn) finishBtn.disabled = false;
-
         updateProgress();
       }
 
-      // Завершение теста и показ результатов
       function finishQuiz() {
-        // Подсчёт правильных ответов
         let correctCount = 0;
         questions.forEach((q, idx) => {
-          if (selectedAnswers[idx] === q.correct) {
-            correctCount++;
-          }
+          if (selectedAnswers[idx] === q.correct) correctCount++;
         });
         const total = questions.length;
         const percent = Math.round((correctCount / total) * 100);
 
-        // Скрываем прогресс и область теста
         progressSection.classList.add('d-none');
         quizArea.classList.add('d-none');
         resultArea.classList.remove('d-none');
 
-        // Формируем фидбек
-        let feedbackText = '';
-        let emoji = '';
-        let message = '';
-        if (percent === 100) {
-          emoji = '🏆';
-          message = 'Идеально! Ты настоящий C#-ниндзя!';
-        } else if (percent >= 80) {
-          emoji = '🌟';
-          message = 'Отличный результат! Ты хорошо знаешь C#.';
-        } else if (percent >= 60) {
-          emoji = '👍';
-          message = 'Неплохо! Но есть куда расти.';
-        } else if (percent >= 40) {
-          emoji = '📘';
-          message = 'Стоит повторить основы C#.';
-        } else {
-          emoji = '💪';
-          message = 'Не расстраивайся! Попробуй ещё раз, практика — путь к успеху.';
-        }
+        let emoji, message;
+        if (percent === 100) { emoji = '🏆'; message = 'Идеально! Ты настоящий C#-ниндзя!'; }
+        else if (percent >= 80) { emoji = '🌟'; message = 'Отличный результат! Ты хорошо знаешь C#.'; }
+        else if (percent >= 60) { emoji = '👍'; message = 'Неплохо! Но есть куда расти.'; }
+        else if (percent >= 40) { emoji = '📘'; message = 'Стоит повторить основы C#.'; }
+        else { emoji = '💪'; message = 'Не расстраивайся! Попробуй ещё раз, практика — путь к успеху.'; }
+
+        // Разбор по темам
+        const topicStats = {};
+        questions.forEach((q, idx) => {
+          const t = q.topic || 'Без темы';
+          if (!topicStats[t]) topicStats[t] = { correct: 0, total: 0 };
+          topicStats[t].total++;
+          if (selectedAnswers[idx] === q.correct) topicStats[t].correct++;
+        });
+        let topicHtml = '';
+        Object.entries(topicStats).forEach(([t, s]) => {
+          const p = Math.round((s.correct / s.total) * 100);
+          const cls = p >= 80 ? 'success' : p >= 50 ? 'warning' : 'danger';
+          topicHtml += `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small">${escapeHtml(t)}</span>
+              <span class="badge bg-${cls}-subtle text-${cls}-emphasis">
+                ${s.correct}/${s.total} (${p}%)
+              </span>
+            </div>
+          `;
+        });
 
         resultArea.innerHTML = `
           <div class="feedback-emoji">${emoji}</div>
           <h2 class="fw-bold mb-3" style="color: #0f172a;">Результат</h2>
-          <div class="score-circle mb-3">
-            ${correctCount}/${total}
-          </div>
+          <div class="score-circle mb-3">${correctCount}/${total}</div>
           <p class="fs-5 fw-semibold mb-1">${percent}% правильных ответов</p>
           <p class="text-secondary mb-4">${message}</p>
           <div class="mb-4">
@@ -434,21 +453,40 @@
               <i class="bi bi-arrow-repeat me-1"></i> Пройти заново
             </button>
           </div>
-          <div class="text-start border-top pt-3 small text-secondary">
-            <i class="bi bi-info-circle me-1"></i> Правильные ответы: 
-            ${questions.map((q, i) => `В${i+1}: ${escapeHtml(q.options[q.correct])}`).join(' • ')}
-          </div>
+          ${topicHtml ? `
+            <div class="text-start border-top pt-3 mb-3">
+              <h6 class="fw-bold mb-2">Результат по темам:</h6>
+              ${topicHtml}
+            </div>
+          ` : ''}
+          <details class="text-start small text-secondary">
+            <summary class="fw-semibold mb-2" style="cursor: pointer;">
+              <i class="bi bi-info-circle me-1"></i> Показать правильные ответы
+            </summary>
+            <ol class="ps-3 mb-0">
+              ${questions.map((q, i) => `
+                <li class="mb-2">
+                  <div>${escapeHtml(q.text)}</div>
+                  <div class="text-success small">
+                    ✓ ${escapeHtml(q.options[q.correct])}
+                  </div>
+                  ${selectedAnswers[i] !== null && selectedAnswers[i] !== q.correct
+                    ? `<div class="text-danger small">✗ Ваш ответ: ${escapeHtml(q.options[selectedAnswers[i]])}</div>`
+                    : ''}
+                </li>
+              `).join('')}
+            </ol>
+          </details>
         `;
 
-        // Обработчик кнопки "Пройти заново"
         document.getElementById('restartBtn').addEventListener('click', () => {
           resetQuiz();
         });
       }
 
-      // Простая защита от XSS (для текста вопросов/ответов)
       function escapeHtml(str) {
-        return str.replace(/[&<>"']/g, function(m) {
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/[&<>"']/g, function(m) {
           if (m === '&') return '&amp;';
           if (m === '<') return '&lt;';
           if (m === '>') return '&gt;';
@@ -458,8 +496,8 @@
         });
       }
 
-      // Запуск теста при загрузке
-      resetQuiz();
+      // Запуск
+      init();
     })();
   </script>
 </body>
