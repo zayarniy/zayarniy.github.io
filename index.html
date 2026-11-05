@@ -1,11 +1,466 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C# тестирование учеников</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons (опционально, для красоты) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(145deg, #f0f2f5 0%, #e9ecef 100%);
+      min-height: 100vh;
+      padding: 20px;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+    .test-container {
+      max-width: 920px;
+      margin: 0 auto;
+    }
+    .question-card {
+      background-color: #ffffff;
+      border: none;
+      border-radius: 24px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+      transition: transform 0.2s;
+    }
+    .question-text {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+    .option-item {
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option-item:hover {
+      background: #eef2ff;
+      border-color: #a5b4fc;
+      transform: translateX(4px);
+    }
+    .option-item.selected {
+      background: #e0e7ff;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+    .option-item input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #4f46e5;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+    .option-label {
+      font-size: 1.05rem;
+      color: #1e293b;
+      cursor: pointer;
+      flex: 1;
+      margin: 0;
+    }
+    .progress {
+      height: 10px;
+      border-radius: 12px;
+      background-color: #e2e8f0;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #4f46e5, #818cf8);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+    .badge-step {
+      background: #e0e7ff;
+      color: #4338ca;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary {
+      background: #4f46e5;
+      border: none;
+      border-radius: 40px;
+      padding: 10px 28px;
+      font-weight: 600;
+      transition: all 0.15s;
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.3);
+    }
+    .btn-primary:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.4);
+    }
+    .btn-outline-secondary {
+      border-radius: 40px;
+      padding: 10px 24px;
+      font-weight: 500;
+      border-color: #cbd5e1;
+      color: #475569;
+    }
+    .btn-outline-secondary:hover {
+      background-color: #f1f5f9;
+      border-color: #94a3b8;
+      color: #1e293b;
+    }
+    .result-card {
+      background: white;
+      border-radius: 28px;
+      padding: 2rem 2rem;
+      box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.12);
+    }
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5, #818cf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: white;
+      font-size: 2.4rem;
+      font-weight: 700;
+      box-shadow: 0 12px 24px -6px rgba(79, 70, 229, 0.5);
+    }
+    .feedback-emoji {
+      font-size: 3.5rem;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    @media (max-width: 576px) {
+      .question-text { font-size: 1.15rem; }
+      .option-item { padding: 12px 14px; }
+      .score-circle { width: 90px; height: 90px; font-size: 1.8rem; }
+    }
+  </style>
 </head>
 <body>
-    Заярный А.А.
+  <div class="test-container">
+    <!-- Заголовок -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="display-6 fw-bold" style="color: #0f172a;">🧪 Тест по C#</h1>
+        <p class="text-secondary-emphasis">Проверь свои знания основ языка C#</p>
+      </div>
+      <i class="bi bi-braces-asterisk fs-1 text-primary opacity-50 d-none d-sm-block"></i>
+    </div>
+
+    <!-- Прогресс-бар (изначально скрыт, показывается во время теста) -->
+    <div id="progressSection" class="mb-4 d-none">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <span class="badge-step" id="progressText">Вопрос 1 из 5</span>
+        <span class="text-secondary small" id="progressPercent">0%</span>
+      </div>
+      <div class="progress">
+        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+
+    <!-- Контейнер для теста -->
+    <div id="quizArea" class="question-card p-4 p-md-5">
+      <!-- Здесь будет отображаться вопрос -->
+    </div>
+
+    <!-- Результаты (изначально скрыты) -->
+    <div id="resultArea" class="result-card d-none text-center"></div>
+  </div>
+
+  <script>
+    (function() {
+      // ------------------------------
+      // Данные для теста (вопросы по C#)
+      // ------------------------------
+      const questions = [
+        {
+          text: 'Какой тип данных в C# используется для хранения целых чисел?',
+          options: ['int', 'float', 'string', 'bool'],
+          correct: 0
+        },
+        {
+          text: 'Что означает ключевое слово "static" в C#?',
+          options: [
+            'Свойство принадлежит экземпляру класса',
+            'Метод или поле принадлежит типу, а не объекту',
+            'Переменная не может быть изменена',
+            'Класс является абстрактным'
+          ],
+          correct: 1
+        },
+        {
+          text: 'Какой оператор используется для проверки типа во время выполнения?',
+          options: ['typeof', 'is', 'as', 'sizeof'],
+          correct: 1
+        },
+        {
+          text: 'Что из перечисленного НЕ является циклом в C#?',
+          options: ['for', 'while', 'do-while', 'repeat-until'],
+          correct: 3
+        },
+        {
+          text: 'Какое пространство имён содержит базовые классы .NET, такие как Console и Math?',
+          options: ['System', 'System.IO', 'System.Collections', 'System.Linq'],
+          correct: 0
+        }
+      ];
+
+      // Состояние теста
+      let currentQuestionIndex = 0;
+      let selectedAnswers = new Array(questions.length).fill(null); // -1 или null = не выбран
+      let score = 0;
+
+      // DOM элементы
+      const quizArea = document.getElementById('quizArea');
+      const resultArea = document.getElementById('resultArea');
+      const progressSection = document.getElementById('progressSection');
+      const progressText = document.getElementById('progressText');
+      const progressPercent = document.getElementById('progressPercent');
+      const progressBar = document.getElementById('progressBar');
+
+      // Инициализация/сброс
+      function resetQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = new Array(questions.length).fill(null);
+        score = 0;
+        resultArea.classList.add('d-none');
+        resultArea.innerHTML = '';
+        quizArea.classList.remove('d-none');
+        progressSection.classList.remove('d-none');
+        renderQuestion(0);
+        updateProgress();
+      }
+
+      // Обновление прогресса
+      function updateProgress() {
+        const total = questions.length;
+        const answered = selectedAnswers.filter(a => a !== null).length;
+        const percent = Math.round((answered / total) * 100);
+        progressText.textContent = `Вопрос ${currentQuestionIndex + 1} из ${total}`;
+        progressPercent.textContent = `${percent}%`;
+        progressBar.style.width = `${percent}%`;
+        progressBar.setAttribute('aria-valuenow', percent);
+        progressBar.setAttribute('aria-valuemax', 100);
+      }
+
+      // Отрисовка текущего вопроса
+      function renderQuestion(index) {
+        const q = questions[index];
+        const selected = selectedAnswers[index]; // индекс выбранного варианта или null
+
+        // Формируем HTML для вариантов
+        let optionsHtml = '';
+        q.options.forEach((opt, optIndex) => {
+          const isSelected = (selected === optIndex);
+          optionsHtml += `
+            <div class="option-item ${isSelected ? 'selected' : ''}" data-option-index="${optIndex}">
+              <input class="form-check-input" type="radio" name="questionOptions" id="opt_${optIndex}" value="${optIndex}" ${isSelected ? 'checked' : ''}>
+              <label class="option-label" for="opt_${optIndex}">${escapeHtml(opt)}</label>
+            </div>
+          `;
+        });
+
+        // Кнопки навигации
+        const isFirst = (index === 0);
+        const isLast = (index === questions.length - 1);
+        const hasSelected = (selected !== null && selected !== undefined);
+
+        let navButtons = `
+          <div class="d-flex justify-content-between align-items-center mt-4 pt-2">
+            <button id="prevBtn" class="btn btn-outline-secondary" ${isFirst ? 'disabled' : ''}>
+              <i class="bi bi-arrow-left"></i> Назад
+            </button>
+            <div>
+              ${!isLast ? `<button id="nextBtn" class="btn btn-primary" ${!hasSelected ? 'disabled' : ''}>Далее <i class="bi bi-arrow-right"></i></button>` : ''}
+              ${isLast ? `<button id="finishBtn" class="btn btn-primary" ${!hasSelected ? 'disabled' : ''}>Завершить тест <i class="bi bi-check-lg"></i></button>` : ''}
+            </div>
+          </div>
+        `;
+
+        // Если это последний вопрос и на него уже ответили, кнопка "Завершить" активна.
+        // Но также можно сделать кнопку "Завершить" доступной всегда, если ответ дан.
+        // Логика уже отражена.
+
+        quizArea.innerHTML = `
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h4 class="question-text mb-0">${escapeHtml(q.text)}</h4>
+            <span class="badge-step ms-2">${index + 1}/${questions.length}</span>
+          </div>
+          <div class="mt-3" id="optionsContainer">
+            ${optionsHtml}
+          </div>
+          ${navButtons}
+        `;
+
+        // Обработчики для вариантов
+        const optionDivs = quizArea.querySelectorAll('.option-item');
+        optionDivs.forEach(div => {
+          div.addEventListener('click', function(e) {
+            // Чтобы клик по label не дублировался
+            if (e.target.tagName === 'INPUT') return;
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+              radio.checked = true;
+              // Убираем выделение у других
+              optionDivs.forEach(d => d.classList.remove('selected'));
+              this.classList.add('selected');
+              // Сохраняем ответ
+              const optIndex = parseInt(this.dataset.optionIndex, 10);
+              handleOptionSelect(optIndex);
+            }
+          });
+        });
+
+        // Также обработаем изменение radio (на случай если кликнули прямо по радио)
+        const radioInputs = quizArea.querySelectorAll('input[type="radio"]');
+        radioInputs.forEach(radio => {
+          radio.addEventListener('change', function(e) {
+            e.stopPropagation();
+            const optIndex = parseInt(this.value, 10);
+            const parentDiv = this.closest('.option-item');
+            optionDivs.forEach(d => d.classList.remove('selected'));
+            parentDiv.classList.add('selected');
+            handleOptionSelect(optIndex);
+          });
+        });
+
+        // Обработчики кнопок
+        const prevBtn = document.getElementById('prevBtn');
+        if (prevBtn) {
+          prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+              currentQuestionIndex--;
+              renderQuestion(currentQuestionIndex);
+              updateProgress();
+            }
+          });
+        }
+
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) {
+          nextBtn.addEventListener('click', () => {
+            if (selectedAnswers[currentQuestionIndex] === null) return; // защита
+            if (currentQuestionIndex < questions.length - 1) {
+              currentQuestionIndex++;
+              renderQuestion(currentQuestionIndex);
+              updateProgress();
+            }
+          });
+        }
+
+        const finishBtn = document.getElementById('finishBtn');
+        if (finishBtn) {
+          finishBtn.addEventListener('click', () => {
+            if (selectedAnswers[currentQuestionIndex] === null) return;
+            finishQuiz();
+          });
+        }
+
+        // Обновляем прогресс (на случай если изменился индекс)
+        updateProgress();
+      }
+
+      // Обработка выбора варианта
+      function handleOptionSelect(optIndex) {
+        if (selectedAnswers[currentQuestionIndex] === optIndex) return;
+        selectedAnswers[currentQuestionIndex] = optIndex;
+
+        // Разблокируем кнопку "Далее" или "Завершить", если она есть
+        const nextBtn = document.getElementById('nextBtn');
+        const finishBtn = document.getElementById('finishBtn');
+        if (nextBtn) nextBtn.disabled = false;
+        if (finishBtn) finishBtn.disabled = false;
+
+        updateProgress();
+      }
+
+      // Завершение теста и показ результатов
+      function finishQuiz() {
+        // Подсчёт правильных ответов
+        let correctCount = 0;
+        questions.forEach((q, idx) => {
+          if (selectedAnswers[idx] === q.correct) {
+            correctCount++;
+          }
+        });
+        const total = questions.length;
+        const percent = Math.round((correctCount / total) * 100);
+
+        // Скрываем прогресс и область теста
+        progressSection.classList.add('d-none');
+        quizArea.classList.add('d-none');
+        resultArea.classList.remove('d-none');
+
+        // Формируем фидбек
+        let feedbackText = '';
+        let emoji = '';
+        let message = '';
+        if (percent === 100) {
+          emoji = '🏆';
+          message = 'Идеально! Ты настоящий C#-ниндзя!';
+        } else if (percent >= 80) {
+          emoji = '🌟';
+          message = 'Отличный результат! Ты хорошо знаешь C#.';
+        } else if (percent >= 60) {
+          emoji = '👍';
+          message = 'Неплохо! Но есть куда расти.';
+        } else if (percent >= 40) {
+          emoji = '📘';
+          message = 'Стоит повторить основы C#.';
+        } else {
+          emoji = '💪';
+          message = 'Не расстраивайся! Попробуй ещё раз, практика — путь к успеху.';
+        }
+
+        resultArea.innerHTML = `
+          <div class="feedback-emoji">${emoji}</div>
+          <h2 class="fw-bold mb-3" style="color: #0f172a;">Результат</h2>
+          <div class="score-circle mb-3">
+            ${correctCount}/${total}
+          </div>
+          <p class="fs-5 fw-semibold mb-1">${percent}% правильных ответов</p>
+          <p class="text-secondary mb-4">${message}</p>
+          <div class="mb-4">
+            <button id="restartBtn" class="btn btn-primary px-4">
+              <i class="bi bi-arrow-repeat me-1"></i> Пройти заново
+            </button>
+          </div>
+          <div class="text-start border-top pt-3 small text-secondary">
+            <i class="bi bi-info-circle me-1"></i> Правильные ответы: 
+            ${questions.map((q, i) => `В${i+1}: ${escapeHtml(q.options[q.correct])}`).join(' • ')}
+          </div>
+        `;
+
+        // Обработчик кнопки "Пройти заново"
+        document.getElementById('restartBtn').addEventListener('click', () => {
+          resetQuiz();
+        });
+      }
+
+      // Простая защита от XSS (для текста вопросов/ответов)
+      function escapeHtml(str) {
+        return str.replace(/[&<>"']/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          if (m === '"') return '&quot;';
+          if (m === "'") return '&#39;';
+          return m;
+        });
+      }
+
+      // Запуск теста при загрузке
+      resetQuiz();
+    })();
+  </script>
 </body>
 </html>
